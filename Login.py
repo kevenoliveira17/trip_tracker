@@ -1,4 +1,4 @@
-# app.py
+
 """Travel Expenses Tracker — Página única que combina **Login/Cadastro** e Menu inicial.
 
 Se o usuário não estiver autenticado, exibimos as abas de login/cadastro.
@@ -25,7 +25,7 @@ if st.sidebar.button("🚪 Sair", key="logout_btn"):
 # ---------------------------------------------------------------------------
 # Cabeçalho
 # ---------------------------------------------------------------------------
-st.title("💸 Travel Expenses Tracker")
+st.title("Keven's Travel Expenses Tracker")
 
 # ---------------------------------------------------------------------------
 # Fluxos dependendo do estado de autenticação
@@ -35,16 +35,16 @@ if "user_id" in st.session_state:
     st.success(f"Você está logado como **{st.session_state['user_id']}**.")
 
     st.markdown("### Ações rápidas")
-    st.page_link("pages/1_Registrar_Gasto.py", label="➕ Registrar novo gasto", icon="📥")
-    st.page_link("pages/2_Dashboard.py", label="📊 Ver dashboard", icon="📊")
+    st.page_link("pages/1_Registrar_Gasto.py", label="Registrar novo gasto", icon="📥")
+    st.page_link("pages/2_Dashboard.py", label="Ver dashboard", icon="📊")
 else:
     # ------------------ NÃO LOGADO – mostrar abas Login/Cadastro ------------------
     st.info("Para começar, faça login ou crie uma conta:")
 
-    login_tab, register_tab = st.tabs(["🔑 Login", "➕ Cadastrar"])
+    login_tab, register_tab = st.tabs(["Login", "Cadastrar"])
 
     with login_tab:
-        st.header("🔑 Fazer login")
+        st.header("Fazer login")
         login_email = st.text_input("E‑mail", key="login_email")
         login_password = st.text_input("Senha", type="password", key="login_pwd")
 
@@ -57,7 +57,7 @@ else:
                 st.error("Credenciais inválidas.")
 
     with register_tab:
-        st.header("➕ Criar conta")
+        st.header("Criar conta")
         reg_email = st.text_input("E‑mail", key="reg_email")
         reg_password = st.text_input("Senha", type="password", key="reg_pwd")
         reg_password2 = st.text_input("Confirmar senha", type="password", key="reg_pwd2")
@@ -76,4 +76,4 @@ else:
 # Rodapé
 # ---------------------------------------------------------------------------
 st.markdown("---")
-# st.caption("Desenvolvido em Streamlit · Versão demo")
+
