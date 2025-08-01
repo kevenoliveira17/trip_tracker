@@ -1,4 +1,4 @@
-# pages/3_⚙️_Configurações.py
+
 """Configurações básicas do usuário (categorias, contas, orçamento)."""
 
 from __future__ import annotations
@@ -38,7 +38,6 @@ def editable_list(title: str, items: list[str], add_callback, rename_callback, r
         col1, col2, col3 = st.columns([4, 1, 1])
         new_name = col1.text_input("", value=item, key=f"{add_key_prefix}_{item}")
         if col2.button("💾", key=f"save_{add_key_prefix}_{item}") and new_name != item:
-            # rename: remove old then add new
             remove_callback(user_id, item)
             add_callback(user_id, new_name)
             st.rerun()
@@ -49,7 +48,7 @@ def editable_list(title: str, items: list[str], add_callback, rename_callback, r
 # ---------------------------------------------------------------------------
 # Categorias
 # ---------------------------------------------------------------------------
-with st.expander("🗂️ Categorias", expanded=True):
+with st.expander("🗂️ Categorias", expanded=False):
     editable_list(
         title="Categorias",
         items=sm.get_categories(user_id),
@@ -62,7 +61,7 @@ with st.expander("🗂️ Categorias", expanded=True):
 # ---------------------------------------------------------------------------
 # Contas
 # ---------------------------------------------------------------------------
-with st.expander("💳 Contas / Cartões", expanded=True):
+with st.expander("💳 Contas / Cartões", expanded=False):
     editable_list(
         title="Contas / Cartões",
         items=sm.get_accounts(user_id),
@@ -75,7 +74,7 @@ with st.expander("💳 Contas / Cartões", expanded=True):
 # ---------------------------------------------------------------------------
 # Orçamento mensal
 # ---------------------------------------------------------------------------
-with st.expander("📅 Orçamento mensal", expanded=True):
+with st.expander("📅 Orçamento mensal", expanded=False):
     current_budget = sm.get_monthly_budget(user_id) or 0.0
     budget_val = st.number_input(
         "Limite de gasto mensal (BRL)",
@@ -84,6 +83,6 @@ with st.expander("📅 Orçamento mensal", expanded=True):
         value=float(current_budget),
         format="%.2f",
     )
-    if st.button("💾 Salvar orçamento"):
+    if st.button("Salvar orçamento"):
         sm.set_monthly_budget(user_id, budget_val)
         st.success("Orçamento atualizado!")
