@@ -37,6 +37,7 @@ if "user_id" in st.session_state:
     st.markdown("### Ações rápidas")
     st.page_link("pages/1_Registrar_Gasto.py", label="Registrar novo gasto", icon="📥")
     st.page_link("pages/2_Dashboard.py", label="Ver dashboard", icon="📊")
+    st.page_link("pages/3_Configuracoes.py", label="Configurações", icon="⚙️")
 else:
     # ------------------ NÃO LOGADO – mostrar abas Login/Cadastro ------------------
     st.info("Para começar, faça login ou crie uma conta:")
