@@ -1,9 +1,9 @@
-# pages/2_📊_Dashboard.py
+
 """Dashboard analítico de gastos — Travel Expenses App."""
 
 from __future__ import annotations
 
-from datetime import timedelta
+from datetime import date, datetime, timedelta
 
 import pandas as pd
 import plotly.express as px
@@ -18,40 +18,53 @@ st.set_page_config(page_title="Dashboard de Gastos", page_icon="📊", layout="w
 # Autenticação
 # ---------------------------------------------------------------------------
 if "user_id" not in st.session_state:
-    st.warning("🔐 Faça login para visualizar o dashboard.")
+    st.warning("Faça login para visualizar o dashboard.")
     st.stop()
 
 user_id = st.session_state["user_id"]
 
 # ---------------------------------------------------------------------------
-# Dados
+# Carregar dados
 # ---------------------------------------------------------------------------
 full_df = dm.list_expenses(user_id=user_id, as_dataframe=True)
 if full_df.empty:
-    st.info("Nenhum gasto cadastrado ainda. Adicione gastos na página 📥 Registrar Gasto para visualizar o dashboard.")
+    st.info("Nenhum gasto cadastrado ainda. Adicione gastos na página Registrar Gasto para visualizar o dashboard.")
     st.stop()
 
 full_df["date"] = pd.to_datetime(full_df["date"])
 full_df.sort_values("date", inplace=True)
 
 # ---------------------------------------------------------------------------
-# Filtros
+# Sidebar — seleção de modo
 # ---------------------------------------------------------------------------
 st.sidebar.header("🔎 Filtros")
+
+mode = st.sidebar.radio(
+    "Período",
+    options=["Todos os gastos", "Mês atual"],
+    index=0,
+)
 
 min_date = full_df["date"].min().date()
 max_date = full_df["date"].max().date()
 
-lookback_days = 30
-safe_start = max(min_date, max_date - timedelta(days=lookback_days))
+if mode == "Mês atual":
+    today = date.today()
+    start_date = today.replace(day=1)
+    end_date = today
+    st.sidebar.info(f"Mostrando de {start_date.strftime('%d/%m/%Y')} até hoje.")
+else:
+    # Custom range (default todo o histórico)
+    start_date, end_date = st.sidebar.date_input(
+        "Selecione o intervalo",
+        value=(min_date, max_date),
+        min_value=min_date,
+        max_value=max_date,
+    )
 
-start_date, end_date = st.sidebar.date_input(
-    "Período",
-    value=(safe_start, max_date),
-    min_value=min_date,
-    max_value=max_date,
-)
-
+# ---------------------------------------------------------------------------
+# Outros filtros (categoria / conta)
+# ---------------------------------------------------------------------------
 categories = sorted(full_df["category"].dropna().unique())
 selected_categories = st.sidebar.multiselect("Categoria", categories, default=categories)
 
@@ -90,9 +103,8 @@ col3.metric("Média diária", f"R$ {avg_day:,.2f}")
 # Orçamento mensal
 # ---------------------------------------------------------------------------
 budget = sm.get_monthly_budget(user_id)
-period_single_month = start_date.month == end_date.month and start_date.year == end_date.year
 
-if budget and period_single_month:
+if budget and mode == "Mês atual":
     percent = total_period / budget if budget else 0
     remaining = budget - total_period
     col4.metric("Orçamento restante", f"R$ {remaining:,.2f}", f"{percent*100:.1f}% usado")
@@ -100,7 +112,7 @@ if budget and period_single_month:
     if percent >= 1:
         st.error("🚨 Você ultrapassou o orçamento mensal!")
     elif percent >= 0.8:
-        st.warning("⚠️ Você já consumiu mais de 80 % do orçamento.")
+        st.warning("⚠️ Você já consumiu mais de 80 % do orçamento.")
 else:
     col4.metric("Orçamento restante", "—", "—")
 
@@ -143,7 +155,7 @@ st.markdown("---")
 # ---------------------------------------------------------------------------
 # Tabela detalhada
 # ---------------------------------------------------------------------------
-st.subheader("📄 Gastos detalhados")
+st.subheader("Gastos detalhados")
 
 show_receipts = st.checkbox("Mostrar coluna de recibo", value=False)
 cols = ["date", "amount", "category", "description", "account"]
