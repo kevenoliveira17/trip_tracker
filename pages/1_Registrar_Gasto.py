@@ -1,4 +1,4 @@
-# pages/1_📥_Registrar_Gasto.py
+
 """Página Streamlit para registrar um novo gasto (integrada às Configurações)."""
 
 from __future__ import annotations
@@ -58,7 +58,7 @@ if not accounts:
 # ---------------------------------------------------------------------------
 # Formulário
 # ---------------------------------------------------------------------------
-st.title("📥 Registrar novo gasto")
+st.title("Registrar novo gasto")
 with st.form("expense_form", clear_on_submit=True):
     col1, col2 = st.columns(2)
     date_input: date_type = col1.date_input("Data", value=date_type.today())
@@ -94,7 +94,7 @@ if submitted:
 # Últimos gastos
 # ---------------------------------------------------------------------------
 st.markdown("---")
-st.subheader("📄 Últimos gastos cadastrados")
+st.subheader("Últimos gastos cadastrados")
 
 recent_df = dm.list_expenses(user_id=user_id, as_dataframe=True)
 
